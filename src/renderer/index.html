@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';">
+ <title>Base Automation</title>
+ <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+ <header class="titlebar">
+ <div class="titlebar-left">
+ <span class="app-icon">&#9881;</span>
+ <h1>Base Automation</h1>
+ </div>
+ <div class="titlebar-right">
+ <span id="running-count" class="badge">0 Running</span>
+ </div>
+ </header>
+ <main class="app-layout">
+ <aside class="sidebar">
+ <div class="sidebar-header">
+ <h2>Accounts</h2>
+ <button id="btn-add-account" class="btn btn-primary btn-sm">+ Add</button>
+ </div>
+ <div id="account-list" class="account-list">
+ <div class="empty-state">No accounts yet. Click "+ Add" to create one.</div>
+ </div>
+ <div class="sidebar-footer">
+ <button id="btn-launch-selected" class="btn btn-success btn-block" disabled>&#9654; Launch Selected</button>
+ <button id="btn-delete-selected" class="btn btn-danger btn-block" disabled>&#128465; Delete Selected</button>
+ <button id="btn-stop-all" class="btn btn-danger btn-block" disabled>&#9632; Stop All</button>
+ </div>
+ </aside>
+ <section class="content">
+ <div class="content-header"><h2>Dashboard</h2></div>
+ <div id="status-grid" class="status-grid">
+ <div class="empty-state-large">
+ <div class="empty-icon">&#128640;</div>
+ <p>Select accounts and click <strong>Launch Selected</strong> to start.</p>
+ </div>
+ </div>
+ </section>
+ </main>
+ <div id="modal-overlay" class="modal-overlay hidden">
+ <div class="modal">
+ <div class="modal-header">
+ <h3 id="modal-title">Add Account</h3>
+ <button id="btn-modal-close" class="btn-close">&times;</button>
+ </div>
+ <form id="account-form" class="modal-body">
+ <input type="hidden" id="form-account-id">
+ <div class="form-group">
+ <label for="form-name">Account Name</label>
+ <input type="text" id="form-name" placeholder="e.g. Account 1" required>
+ </div>
+ <div class="form-group">
+ <label for="form-proxy">Proxy (optional)</label>
+ <input type="text" id="form-proxy" placeholder="e.g. http://user:pass@host:port">
+ </div>
+ <div class="form-group">
+ <label for="form-notes">Notes (optional)</label>
+ <textarea id="form-notes" rows="3" placeholder="Any notes..."></textarea>
+ </div>
+ <div class="modal-footer">
+ <button type="button" id="btn-modal-cancel" class="btn btn-secondary">Cancel</button>
+ <button type="submit" class="btn btn-primary">Save</button>
+ </div>
+ </form>
+ </div>
+ </div>
+ <script src="js/renderer.js"></script>
+</body>
+</html>
