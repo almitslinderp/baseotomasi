@@ -189,7 +189,8 @@ body {
   color: var(--text-secondary);
 }
 
-.param-group input {
+.param-group input,
+.param-group textarea {
   width: 100%;
   padding: 8px 10px;
   background: var(--bg-input);
@@ -201,13 +202,20 @@ body {
   transition: border-color var(--transition);
 }
 
-.param-group input:focus {
+.param-group input:focus,
+.param-group textarea:focus {
   outline: none;
   border-color: var(--accent);
 }
 
-.param-group input::placeholder {
+.param-group input::placeholder,
+.param-group textarea::placeholder {
   color: var(--text-muted);
+}
+
+.param-group textarea {
+  resize: vertical;
+  min-height: 60px;
 }
 
 /* ========== PANEL ACTIONS ========== */

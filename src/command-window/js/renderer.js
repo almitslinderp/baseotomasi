@@ -74,8 +74,14 @@ function renderParams(action) {
     var label = document.createElement('label');
     label.textContent = p.label + (p.required ? ' *' : '');
     label.setAttribute('for', 'param-' + p.name);
-    var input = document.createElement('input');
-    input.type = p.type || 'text';
+    var input;
+    if (p.type === 'textarea') {
+      input = document.createElement('textarea');
+      input.rows = p.rows || 5;
+    } else {
+      input = document.createElement('input');
+      input.type = p.type || 'text';
+    }
     input.id = 'param-' + p.name;
     input.name = p.name;
     input.placeholder = p.placeholder || '';
@@ -87,7 +93,7 @@ function renderParams(action) {
 }
 
 function getParamValues() {
-  var inputs = paramsContainer.querySelectorAll('input');
+  var inputs = paramsContainer.querySelectorAll('input, textarea');
   var values = {};
   for (var i = 0; i < inputs.length; i++) {
     values[inputs[i].name] = inputs[i].value.trim();
