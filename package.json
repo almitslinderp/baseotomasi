@@ -4,8 +4,8 @@
   "description": "Desktop automation app with Puppeteer + Chrome mobile emulation",
   "main": "src/main/main.js",
   "scripts": {
-    "start": "set ELECTRON_RUN_AS_NODE= && electron .",
-    "dev": "set ELECTRON_RUN_AS_NODE= && electron . --dev"
+    "start": "cross-env ELECTRON_RUN_AS_NODE= electron .",
+    "dev": "cross-env ELECTRON_RUN_AS_NODE= electron . --dev"
   },
   "keywords": [
     "automation",
@@ -16,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cross-env": "^7.0.3",
     "electron": "^41.2.1",
     "puppeteer-core": "^21.6.0"
   }
