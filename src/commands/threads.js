@@ -51,7 +51,14 @@ module.exports = {
           log('No existing cookies to clear');
         }
 
-        // Set all cookies as-is, no domain filtering — let the browser handle it
+        // Sanitize cookies: keep only fields Puppeteer's setCookie accepts and
+        // normalize sameSite. Browser exports often include extras (storeId,
+        // session, hostOnly, etc.) and non-string sameSite values (null/bool)
+        // which Puppeteer rejects with "Failed to deserialize ... string value
+        // expected".
+        var ALLOWED_FIELDS = ['name', 'value', 'domain', 'path', 'expires', 'httpOnly', 'secure', 'sameSite'];
+        var VALID_SAME_SITE = ['Strict', 'Lax', 'None'];
+
         log('Setting ' + cookies.length + ' cookie(s)...');
         var preparedCookies = [];
         for (var i = 0; i < cookies.length; i++) {
@@ -60,7 +67,15 @@ module.exports = {
             log('Skipping cookie at index ' + i + ' — missing name or value');
             continue;
           }
-          preparedCookies.push(c);
+          var sanitized = {};
+          for (var f = 0; f < ALLOWED_FIELDS.length; f++) {
+            var key = ALLOWED_FIELDS[f];
+            if (c[key] !== undefined) sanitized[key] = c[key];
+          }
+          if (sanitized.sameSite !== undefined && VALID_SAME_SITE.indexOf(sanitized.sameSite) === -1) {
+            delete sanitized.sameSite;
+          }
+          preparedCookies.push(sanitized);
         }
 
         if (preparedCookies.length === 0) {
