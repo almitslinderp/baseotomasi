@@ -32,13 +32,18 @@ module.exports = {
           throw new Error('Cookies must be a non-empty JSON array');
         }
 
-        // Navigate to Threads
-        log('Navigating to https://www.threads.net ...');
-        await page.goto('https://www.threads.net', { waitUntil: 'domcontentloaded', timeout: 30000 });
+        // Navigate to Threads (threads.com is the current canonical domain)
+        log('Navigating to https://www.threads.com ...');
+        await page.goto('https://www.threads.com', { waitUntil: 'domcontentloaded', timeout: 30000 });
 
-        // Clear existing cookies for Threads domains
+        // Clear existing cookies for all Threads domains (.threads.com, .threads.net, www variants)
         log('Clearing existing cookies for Threads domains...');
-        var existingCookies = await page.cookies('https://www.threads.net', 'https://threads.net');
+        var existingCookies = await page.cookies(
+          'https://www.threads.com',
+          'https://threads.com',
+          'https://www.threads.net',
+          'https://threads.net'
+        );
         if (existingCookies.length > 0) {
           await page.deleteCookie.apply(page, existingCookies);
           log('Cleared ' + existingCookies.length + ' existing cookie(s)');
@@ -46,7 +51,7 @@ module.exports = {
           log('No existing cookies to clear');
         }
 
-        // Scope cookies to Threads domains and set them
+        // Set all cookies as-is, no domain filtering — let the browser handle it
         log('Setting ' + cookies.length + ' cookie(s)...');
         var preparedCookies = [];
         for (var i = 0; i < cookies.length; i++) {
@@ -55,26 +60,12 @@ module.exports = {
             log('Skipping cookie at index ' + i + ' — missing name or value');
             continue;
           }
-          var domain = c.domain || '.threads.net';
-          // Ensure cookie is scoped to Threads
-          if (domain.indexOf('threads.net') === -1) {
-            log('Skipping cookie "' + c.name + '" — domain "' + domain + '" is not threads.net');
-            continue;
-          }
-          preparedCookies.push({
-            name: c.name,
-            value: c.value,
-            domain: domain,
-            path: c.path || '/',
-            httpOnly: c.httpOnly !== undefined ? c.httpOnly : false,
-            secure: c.secure !== undefined ? c.secure : true,
-            sameSite: c.sameSite || 'None',
-          });
+          preparedCookies.push(c);
         }
 
         if (preparedCookies.length === 0) {
-          log('No valid Threads cookies found after filtering');
-          throw new Error('No valid cookies scoped to threads.net');
+          log('No valid cookies found (each cookie must have name and value)');
+          throw new Error('No valid cookies provided');
         }
 
         await page.setCookie.apply(page, preparedCookies);
@@ -82,7 +73,7 @@ module.exports = {
 
         // Reload the page with cookies applied
         log('Reloading page with new cookies...');
-        await page.goto('https://www.threads.net', { waitUntil: 'networkidle2', timeout: 30000 });
+        await page.goto('https://www.threads.com', { waitUntil: 'networkidle2', timeout: 30000 });
 
         // Wait for a selector that confirms login
         log('Checking login status...');
